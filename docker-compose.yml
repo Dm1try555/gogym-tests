@@ -1,0 +1,40 @@
+services:
+  # Запуск всех тестов (coach + customer)
+  tests:
+    build: .
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./.env:/app/.env:ro
+    environment:
+      - ENV=.env
+    command: python run_all_tests.py
+
+  # Запуск только тестов коуча
+  tests-coach:
+    build: .
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./.env:/app/.env:ro
+    environment:
+      - ENV=.env
+    command: pytest -v --role=coach -m coach --alluredir=allure-results
+
+  # Запуск только тестов клиента
+  tests-customer:
+    build: .
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./.env:/app/.env:ro
+    environment:
+      - ENV=.env
+    command: pytest -v --role=customer -m customer --alluredir=allure-results
+
+  # Запуск тестов синхронной записи на слоты
+  tests-slots:
+    build: .
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./.env:/app/.env:ro
+    environment:
+      - ENV=.env
+    command: pytest -v --role=coach tests/test_sync_slot_booking.py --alluredir=allure-results
